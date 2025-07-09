@@ -1,0 +1,7 @@
+<input 
+    type="text" 
+    [(ngModel)]="title"
+    placeholder="Neues Todo"
+    (keyup.enter)="addTodo()" 
+/>
+<button (click)="addTodo()">Hinzufügen</button>

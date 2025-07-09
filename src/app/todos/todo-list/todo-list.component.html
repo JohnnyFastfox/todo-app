@@ -1,0 +1,4 @@
+<ul>
+    <app-todo-item *ngFor="let todo of todos" [todo]="todo" (toggle)="onToggle(todo.id)" (remove)="onRemove(todo.id)">
+    </app-todo-item>
+</ul>
