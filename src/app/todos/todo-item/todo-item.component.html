@@ -1,5 +1,6 @@
 <li>
     <input type="checkbox" [checked]="todo.completed" (change)="onToggle()" />
     <span [ngClass]="{ completed: todo.completed }">{{ todo.title }}</span>
+    <span class="priority">Priorität: {{ todo.priority }}</span>
     <button (click)="onRemove()">Entfernen</button>
 </li>

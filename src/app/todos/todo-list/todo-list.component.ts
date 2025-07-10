@@ -29,8 +29,13 @@ export class TodoListComponent implements OnInit {
     this.todos = this.todoService.getTodos();
   }
 
-  addTodo(title: string): void {
-    this.todoService.addTodo(title);
+  addTodo(event: { title: string; priority: number }): void {
+    this.todoService.addTodo(event.title, event.priority);
+    this.todos = this.todoService.getTodos();
+  }
+
+  completeAllTodos(): void {
+    this.todoService.completeAllTodos();
     this.todos = this.todoService.getTodos();
   }
 }

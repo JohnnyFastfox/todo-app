@@ -6,18 +6,18 @@ import { TodoModel } from './todo.model';
 })
 export class TodoService {
   private todos: TodoModel[] = [
-    new TodoModel(1, 'Angular CLI ausprobieren'),
-    new TodoModel(2, 'Erste Komponente schreiben'),
-    new TodoModel(3, 'Service und Modell anlegen')
+    new TodoModel(1, 'Angular CLI ausprobieren', false, '', 1),
+    new TodoModel(2, 'Erste Komponente schreiben', false, '', 2),
+    new TodoModel(3, 'Service und Modell anlegen', false, '', 3)
   ];
 
   getTodos(): TodoModel[] {
     return this.todos;
   }
 
-  addTodo(title: string): void { 
+  addTodo(title: string, priority: number = 1): void { 
     const nextId = this.todos.length ? Math.max(...this.todos.map(t => t.id)) + 1 : 1;
-    this.todos = [...this.todos, new TodoModel(nextId, title)]; 
+    this.todos = [...this.todos, new TodoModel(nextId, title, false, '', priority)]; 
   }
 
   toggleTodo(id: number): void {
@@ -27,7 +27,8 @@ export class TodoService {
           todo.id, 
           todo.title, 
           !todo.completed, 
-          todo.description
+          todo.description,
+          todo.priority
         );
         return newTodo;
       }
@@ -37,5 +38,17 @@ export class TodoService {
 
   removeTodo(id: number): void {
     this.todos = this.todos.filter(todo => todo.id !== id); 
+  }
+
+  completeAllTodos(): void {
+    this.todos = this.todos.map(todo => {
+      return new TodoModel(
+        todo.id,
+        todo.title,
+        true,
+        todo.description,
+        todo.priority
+      );
+    });
   }
 }
