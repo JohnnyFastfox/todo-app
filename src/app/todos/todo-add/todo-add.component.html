@@ -1,15 +1,30 @@
-<input 
-    type="text" 
-    [(ngModel)]="title"
-    placeholder="Neues Todo"
-    (keyup.enter)="addTodo()" 
-/>
-<input
-    type="number"
-    [(ngModel)]="priority"
-    min="1"
-    placeholder="Priorität"
-    (keyup.enter)="addTodo()"
-    style="width: 90px; margin-left: 8px;"
-/>
-<button (click)="addTodo()">Hinzufügen</button>
+<form [formGroup]="todoForm" (ngSubmit)="addTodo()">
+    <div class="form-field">
+        <input formControlName="title" 
+               placeholder="Titel" 
+               (blur)="onTitleBlur()" />
+        
+        <div *ngIf="todoForm.get('title')?.invalid && (todoForm.get('title')?.touched || todoForm.get('title')?.dirty)" 
+             class="error-messages">
+            <small *ngIf="todoForm.get('title')?.errors?.['required']">Titel ist erforderlich</small>
+            <small *ngIf="todoForm.get('title')?.errors?.['minlength']">Mindestens 3 Zeichen</small>
+        </div>
+    </div>
+
+    <div class="form-field">
+        <input type="number" 
+               formControlName="priority" 
+               min="1" 
+               max="10" 
+               placeholder="Priorität" 
+               (blur)="onPriorityBlur()" />
+        
+        <div *ngIf="todoForm.get('priority')?.invalid && (todoForm.get('priority')?.touched || todoForm.get('priority')?.dirty)" 
+             class="error-messages">
+            <small *ngIf="todoForm.get('priority')?.errors?.['min']">Priorität muss mindestens 1 sein</small>
+            <small *ngIf="todoForm.get('priority')?.errors?.['max']">Priorität darf maximal 10 sein</small>
+        </div>
+    </div>
+
+    <button type="submit" [disabled]="todoForm.invalid">Hinzufügen</button>
+</form>

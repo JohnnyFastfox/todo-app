@@ -7,6 +7,7 @@ import { AbsolutePriorityPipe } from '../absolute-priority-pipe';
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
   styleUrls: ['./todo-item.component.scss'],
+  standalone: true,
   imports: [CommonModule, AbsolutePriorityPipe]
 })
 export class TodoItemComponent {
