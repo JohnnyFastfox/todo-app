@@ -6,6 +6,7 @@ li {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .completed {
@@ -14,11 +15,10 @@ li {
 }
 
 .priority {
-  background-color: #f0f0f0;
   padding: 2px 6px;
   border-radius: 3px;
   font-size: 0.9em;
-  color: #666;
+  transition: all 0.2s ease;
 }
 
 button {
@@ -32,4 +32,39 @@ button {
 
 button:hover {
   background-color: #cc0000;
+}
+
+/* Priority-based styling */
+.high-priority {
+  border-left: 4px solid #ff6b6b;
+  background-color: #fff5f5;
+}
+
+.medium-priority {
+  border-left: 4px solid #ffd93d;
+  background-color: #fffbf0;
+}
+
+.low-priority {
+  border-left: 4px solid #6bcf7f;
+  background-color: #f0fff4;
+}
+
+.completed-todo {
+  opacity: 0.7;
+  background-color: #f8f9fa;
+}
+
+.high-priority-text {
+  font-weight: bold;
+  color: #d63031;
+}
+
+.medium-priority-text {
+  font-weight: 500;
+  color: #fdcb6e;
+}
+
+.low-priority-text {
+  color: #00b894;
 }

@@ -12,6 +12,7 @@ import { TodoItemComponent } from '../todo-item/todo-item.component';
 })
 export class TodoListComponent implements OnInit {
   todos: TodoModel[] = [];
+  filter: 'all' | 'open' | 'done' = 'all';
 
   constructor(private todoService: TodoService) {}
 
@@ -37,5 +38,28 @@ export class TodoListComponent implements OnInit {
   completeAllTodos(): void {
     this.todoService.completeAllTodos();
     this.todos = this.todoService.getTodos();
+  }
+
+  setFilter(newFilter: 'all' | 'open' | 'done'): void {
+    this.filter = newFilter;
+  }
+
+  getFilteredTodos(): TodoModel[] {
+    switch (this.filter) {
+      case 'open':
+        return this.todos.filter(todo => !todo.completed);
+      case 'done':
+        return this.todos.filter(todo => todo.completed);
+      default:
+        return this.todos;
+    }
+  }
+
+  getCompletedCount(): number {
+    return this.todos.filter(todo => todo.completed).length;
+  }
+
+  getTotalCount(): number {
+    return this.todos.length;
   }
 }

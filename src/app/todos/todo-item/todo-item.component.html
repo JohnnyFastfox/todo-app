@@ -1,6 +1,31 @@
-<li>
+<li [ngClass]="{ 
+    'high-priority': todo.priority > 5, 
+    'medium-priority': todo.priority > 2 && todo.priority <= 5,
+    'low-priority': todo.priority <= 2,
+    'completed-todo': todo.completed 
+  }">
     <input type="checkbox" [checked]="todo.completed" (change)="onToggle()" />
-    <span [ngClass]="{ completed: todo.completed }">{{ todo.title }}</span>
-    <span class="priority">Priorität: {{ todo.priority }}</span>
+    
+    <!-- [ngClass] for dynamic CSS classes -->
+    <span [ngClass]="{ 
+      'completed': todo.completed, 
+      'high-priority-text': todo.priority > 5,
+      'medium-priority-text': todo.priority > 2 && todo.priority <= 5,
+      'low-priority-text': todo.priority <= 2
+    }">
+      {{ todo.title }}
+    </span>
+    
+    <!-- [ngStyle] for dynamic inline styles -->
+    <span class="priority" 
+          [ngStyle]="{ 
+            'background-color': todo.priority > 5 ? '#ff6b6b' : 
+                               todo.priority > 2 ? '#ffd93d' : '#6bcf7f',
+            'color': todo.priority > 5 ? 'white' : 'black',
+            'font-weight': todo.priority > 5 ? 'bold' : 'normal'
+          }">
+      Priorität: {{ todo.priority }}
+    </span>
+    
     <button (click)="onRemove()">Entfernen</button>
 </li>

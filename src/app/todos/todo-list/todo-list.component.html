@@ -1,5 +1,52 @@
-<button (click)="completeAllTodos()" class="complete-all-btn">Alle Todos erledigen</button>
-<ul>
-    <app-todo-item *ngFor="let todo of todos" [todo]="todo" (toggle)="onToggle(todo.id)" (remove)="onRemove(todo.id)">
+<!-- *ngIf: Show message when no todos exist -->
+<div *ngIf="todos.length === 0" class="no-todos-message">
+  <h3>Keine Todos vorhanden!</h3>
+  <p>Erstelle deine erste Aufgabe oben im Formular.</p>
+</div>
+
+<!-- *ngIf: Show completion message when all todos are done -->
+<div *ngIf="todos.length > 0 && getCompletedCount() === getTotalCount()" class="all-completed-message">
+  <h3>Alle Aufgaben erledigt!</h3>
+  <p>Du hast alle {{ getTotalCount() }} Todos erfolgreich abgeschlossen!</p>
+</div>
+
+<!-- Filter buttons - individual buttons for each state -->
+<div class="filter-section">
+  <h4>Filter:</h4>
+  <button (click)="setFilter('all')" 
+          [ngClass]="{ 'active': filter === 'all' }" 
+          class="filter-btn">
+    Alle Todos ({{ getTotalCount() }})
+  </button>
+  <button (click)="setFilter('open')" 
+          [ngClass]="{ 'active': filter === 'open' }" 
+          class="filter-btn">
+    Offene Todos ({{ getTotalCount() - getCompletedCount() }})
+  </button>
+  <button (click)="setFilter('done')" 
+          [ngClass]="{ 'active': filter === 'done' }" 
+          class="filter-btn">
+    Erledigte Todos ({{ getCompletedCount() }})
+  </button>
+</div>
+
+<!-- Complete all button with *ngIf -->
+<button *ngIf="todos.length > 0 && getCompletedCount() < getTotalCount()" 
+        (click)="completeAllTodos()" 
+        class="complete-all-btn">
+  Alle Todos erledigen
+</button>
+
+<!-- Todo list with filtered todos -->
+<ul *ngIf="getFilteredTodos().length > 0">
+    <app-todo-item *ngFor="let todo of getFilteredTodos()" 
+                   [todo]="todo" 
+                   (toggle)="onToggle(todo.id)" 
+                   (remove)="onRemove(todo.id)">
     </app-todo-item>
 </ul>
+
+<!-- *ngIf: Show message when filter returns no results -->
+<div *ngIf="todos.length > 0 && getFilteredTodos().length === 0" class="no-filtered-todos">
+  <p>Keine Todos für den ausgewählten Filter gefunden.</p>
+</div>
