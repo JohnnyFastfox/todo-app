@@ -21,6 +21,13 @@ li {
   transition: all 0.2s ease;
 }
 
+.negative-indicator {
+  font-size: 0.8em;
+  color: #666;
+  font-style: italic;
+  margin-left: 4px;
+}
+
 button {
   background-color: #ff4444;
   color: white;

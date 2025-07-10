@@ -16,15 +16,16 @@
       {{ todo.title }}
     </span>
     
-    <!-- [ngStyle] for dynamic inline styles -->
+    <!-- [ngStyle] for dynamic inline styles with absolutePriority pipe -->
     <span class="priority" 
           [ngStyle]="{ 
-            'background-color': todo.priority > 5 ? '#ff6b6b' : 
-                               todo.priority > 2 ? '#ffd93d' : '#6bcf7f',
-            'color': todo.priority > 5 ? 'white' : 'black',
-            'font-weight': todo.priority > 5 ? 'bold' : 'normal'
+            'background-color': (todo.priority | absolutePriority) > 5 ? '#ff6b6b' : 
+                               (todo.priority | absolutePriority) > 2 ? '#ffd93d' : '#6bcf7f',
+            'color': (todo.priority | absolutePriority) > 5 ? 'white' : 'black',
+            'font-weight': (todo.priority | absolutePriority) > 5 ? 'bold' : 'normal'
           }">
-      Priorität: {{ todo.priority }}
+      Priorität: {{ todo.priority | absolutePriority }}
+      <span *ngIf="todo.priority < 0" class="negative-indicator">(war {{ todo.priority }})</span>
     </span>
     
     <button (click)="onRemove()">Entfernen</button>

@@ -8,7 +8,8 @@ export class TodoService {
   private todos: TodoModel[] = [
     new TodoModel(1, 'Angular CLI ausprobieren', false, '', 1),
     new TodoModel(2, 'Erste Komponente schreiben', false, '', 2),
-    new TodoModel(3, 'Service und Modell anlegen', false, '', 3)
+    new TodoModel(3, 'Service und Modell anlegen', false, '', 3),
+    new TodoModel(4, 'Test mit negativer Priorität', false, '', -5)
   ];
 
   getTodos(): TodoModel[] {
