@@ -1,3 +1,10 @@
 <h1>Angular Todo App</h1>
+
+<!-- Test Material Button Component -->
+<div style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+  <h3>Angular Material Test:</h3>
+  <app-material-button></app-material-button>
+</div>
+
 <app-todo-add (todoCreated)="todoListComponent.addTodo($event)"></app-todo-add>
 <app-todo-list #todoListComponent></app-todo-list>
