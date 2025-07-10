@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TodoService } from '../todo.service';
+
 
 @Component({
   selector: 'app-todo-add',
@@ -16,7 +17,7 @@ export class TodoAddComponent {
   constructor(private todoService: TodoService) { }
   
   todoForm = new FormGroup({
-    title: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    title: new FormControl('', [Validators.required, Validators.minLength(3), this.forbiddenTitleValidator]),
     priority: new FormControl(1, [Validators.min(1), Validators.max(10)]),
   });
 
@@ -34,5 +35,10 @@ export class TodoAddComponent {
 
   onPriorityBlur() {
     this.todoForm.get('priority')?.markAsTouched();
+  }
+
+  forbiddenTitleValidator(control: AbstractControl): ValidationErrors | null {
+    const forbidden = /august/i.test(control.value);
+    return forbidden ? { forbiddenTitle: { value: control.value } } : null;
   }
 }

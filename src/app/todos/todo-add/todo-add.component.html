@@ -8,6 +8,7 @@
              class="error-messages">
             <small *ngIf="todoForm.get('title')?.errors?.['required']">Titel ist erforderlich</small>
             <small *ngIf="todoForm.get('title')?.errors?.['minlength']">Mindestens 3 Zeichen</small>
+            <small *ngIf="todoForm.get('title')?.errors?.['forbiddenTitle']">Das Wort "August" ist nicht erlaubt</small>
         </div>
     </div>
 
