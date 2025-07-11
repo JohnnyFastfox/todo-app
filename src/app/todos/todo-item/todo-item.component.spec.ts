@@ -1,30 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CommonModule } from '@angular/common';
-
 import { TodoItemComponent } from './todo-item.component';
-import { TodoModel } from '../todo.model';
 
 describe('TodoItemComponent', () => {
+
   let component: TodoItemComponent;
   let fixture: ComponentFixture<TodoItemComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        TodoItemComponent,
-        CommonModule
-      ]
-    })
-    .compileComponents();
-
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TodoItemComponent]
+    });
     fixture = TestBed.createComponent(TodoItemComponent);
     component = fixture.componentInstance;
-    // Set a mock todo before detectChanges to prevent template errors
-    component.todo = new TodoModel(1, 'Test Todo', false);
+    component.todo = { id: 1, title: 'Test-Todo' }; // Using object literal instead of TodoModel
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should emit toggle event', () => {
+    spyOn(component.toggle, 'emit');
+    component.onToggle();
+    expect(component.toggle.emit).toHaveBeenCalled();
+  });
+
+  it('should emit remove event', () => {
+    spyOn(component.remove, 'emit');
+    component.onRemove();
+    expect(component.remove.emit).toHaveBeenCalled();
   });
 });
