@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TodoItemComponent } from './todo-item.component';
+import { Todo } from '../todo.model';
 
 describe('TodoItemComponent', () => {
 
@@ -8,11 +9,11 @@ describe('TodoItemComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TodoItemComponent]
+      imports: [TodoItemComponent]  // Use imports for standalone components
     });
     fixture = TestBed.createComponent(TodoItemComponent);
     component = fixture.componentInstance;
-    component.todo = { id: 1, title: 'Test-Todo' }; // Using object literal instead of TodoModel
+    component.todo = new Todo('test-id-123', 'Test-Todo', false, '', 1);
     fixture.detectChanges();
   });
 

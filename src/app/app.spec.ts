@@ -1,10 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { App } from './app';
-import { TodoAddComponent } from './todos/todo-add/todo-add.component';
-import { TodoListComponent } from './todos/todo-list/todo-list.component';
-import { TodoItemComponent } from './todos/todo-item/todo-item.component';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { TodoService } from './todos/todo.service';
 
 describe('App', () => {
@@ -12,11 +9,8 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [
         App,
-        TodoAddComponent,
-        TodoListComponent,
-        TodoItemComponent,
-        CommonModule,
-        FormsModule
+        RouterTestingModule,
+        HttpClientTestingModule
       ],
       providers: [TodoService]
     }).compileComponents();
@@ -33,5 +27,28 @@ describe('App', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('h1')?.textContent)
       .toContain('Angular Todo App');
+  });
+
+  it('should render navigation links', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    
+    const homeLink = el.querySelector('a[routerlink="/"]');
+    const addLink = el.querySelector('a[routerlink="/add"]');
+    
+    expect(homeLink).toBeTruthy();
+    expect(addLink).toBeTruthy();
+    expect(homeLink?.textContent).toContain('Home');
+    expect(addLink?.textContent).toContain('Add Todo');
+  });
+
+  it('should render router outlet', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    
+    const routerOutlet = el.querySelector('router-outlet');
+    expect(routerOutlet).toBeTruthy();
   });
 });
