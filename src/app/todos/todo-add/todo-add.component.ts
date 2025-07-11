@@ -1,8 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TodoService } from '../todo.service';
-
 
 @Component({
   selector: 'app-todo-add',
@@ -14,7 +14,10 @@ import { TodoService } from '../todo.service';
 export class TodoAddComponent {
   @Output() todoCreated = new EventEmitter<{ title: string; priority: number }>();
 
-  constructor(private todoService: TodoService) { }
+  constructor(
+    private todoService: TodoService,
+    private router: Router
+  ) { }
   
   todoForm = new FormGroup({
     title: new FormControl('', [Validators.required, Validators.minLength(3), this.forbiddenTitleValidator]),
@@ -24,8 +27,15 @@ export class TodoAddComponent {
   addTodo() {
     if (this.todoForm.valid) {
       const { title, priority } = this.todoForm.value;
-      this.todoCreated.emit({ title: title ?? '', priority: priority ?? 1 });
-      this.todoForm.reset();
+      this.todoService.addTodo(title ?? '', priority ?? 1).subscribe({
+        next: () => {
+          this.todoForm.reset();
+          this.router.navigate(['/']); // Navigate back to home after adding
+        },
+        error: (error) => {
+          console.error('Error adding todo:', error);
+        }
+      });
     }
   }
 

@@ -6,5 +6,11 @@
   <app-material-button></app-material-button>
 </div>
 
-<app-todo-add (todoCreated)="todoListComponent.addTodo($event)"></app-todo-add>
-<app-todo-list #todoListComponent></app-todo-list>
+<!-- Navigation -->
+<nav style="margin: 20px 0; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+  <a routerLink="/" style="margin-right: 15px; text-decoration: none; color: #007bff;">Home</a>
+  <a routerLink="/add" style="margin-right: 15px; text-decoration: none; color: #007bff;">Add Todo</a>
+</nav>
+
+<!-- Router outlet for component rendering -->
+<router-outlet></router-outlet>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TodoService } from '../todo.service';
 import { TodoModel, Todo } from '../todo.model';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
@@ -14,12 +15,27 @@ import { TodoItemComponent } from '../todo-item/todo-item.component';
 export class TodoListComponent implements OnInit {
   todos: Todo[] = [];
   filter: 'all' | 'open' | 'done' = 'all';
+  editingTodoId: string | null = null;
 
-  constructor(private todoService: TodoService) {}
+  constructor(
+    private todoService: TodoService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    // Subscribe to todos
     this.todoService.getTodos().subscribe(todos => {
       this.todos = todos;
+    });
+
+    // Check for edit route parameter
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.editingTodoId = params['id'];
+        // You could implement edit functionality here
+        console.log('Editing todo with ID:', this.editingTodoId);
+      }
     });
   }
 
@@ -76,5 +92,14 @@ export class TodoListComponent implements OnInit {
 
   getTotalCount(): number {
     return this.todos.length;
+  }
+
+  // Navigation helper methods
+  navigateToAdd(): void {
+    this.router.navigate(['/add']);
+  }
+
+  navigateToEdit(id: string): void {
+    this.router.navigate(['/edit', id]);
   }
 }
