@@ -1,55 +1,117 @@
 import { Injectable } from '@angular/core';
-import { TodoModel } from './todo.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject, tap, map } from 'rxjs';
+import { TodoModel, Todo } from './todo.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoService {
-  private todos: TodoModel[] = [
-    new TodoModel(1, 'Angular CLI ausprobieren', false, '', 1),
-    new TodoModel(2, 'Erste Komponente schreiben', false, '', 2),
-    new TodoModel(3, 'Service und Modell anlegen', false, '', 3),
-    new TodoModel(4, 'Test mit negativer Priorität', false, '', -5)
-  ];
+  private apiUrl = 'http://localhost:3001/api/todos';
+  private todosSubject = new BehaviorSubject<Todo[]>([]);
+  public todos$ = this.todosSubject.asObservable();
 
-  getTodos(): TodoModel[] {
-    return this.todos;
+  constructor(private http: HttpClient) {
+    this.loadTodos();
   }
 
-  addTodo(title: string, priority: number = 1): void { 
-    const nextId = this.todos.length ? Math.max(...this.todos.map(t => t.id)) + 1 : 1;
-    this.todos = [...this.todos, new TodoModel(nextId, title, false, '', priority)]; 
-  }
-
-  toggleTodo(id: number): void {
-    this.todos = this.todos.map(todo => {
-      if (todo.id === id) {
-        const newTodo = new TodoModel(
-          todo.id, 
-          todo.title, 
-          !todo.completed, 
-          todo.description,
-          todo.priority
-        );
-        return newTodo;
+  private loadTodos(): void {
+    this.http.get<TodoModel[]>(this.apiUrl).subscribe({
+      next: (todos) => {
+        const todoInstances = todos.map(todo => Todo.fromApi(todo));
+        this.todosSubject.next(todoInstances);
+      },
+      error: (error) => {
+        console.error('Error loading todos:', error);
+        this.todosSubject.next([]);
       }
-      return todo;
     });
   }
 
-  removeTodo(id: number): void {
-    this.todos = this.todos.filter(todo => todo.id !== id); 
+  getTodos(): Observable<Todo[]> {
+    return this.todos$;
   }
 
-  completeAllTodos(): void {
-    this.todos = this.todos.map(todo => {
-      return new TodoModel(
+  addTodo(title: string, priority: number = 1, description: string = ''): Observable<Todo> {
+    const todoData = {
+      title,
+      priority,
+      description,
+      completed: false
+    };
+
+    return this.http.post<TodoModel>(this.apiUrl, todoData).pipe(
+      map((newTodo) => Todo.fromApi(newTodo)),
+      tap((todo) => {
+        const currentTodos = this.todosSubject.value;
+        this.todosSubject.next([...currentTodos, todo]);
+      })
+    );
+  }
+
+  toggleTodo(id: string): Observable<Todo> {
+    return this.http.patch<TodoModel>(`${this.apiUrl}/${id}/toggle`, {}).pipe(
+      map((updatedTodo) => Todo.fromApi(updatedTodo)),
+      tap((todo) => {
+        const currentTodos = this.todosSubject.value;
+        const updatedTodos = currentTodos.map(t => 
+          t.id === id ? todo : t
+        );
+        this.todosSubject.next(updatedTodos);
+      })
+    );
+  }
+
+  updateTodo(todo: Todo): Observable<Todo> {
+    return this.http.put<TodoModel>(`${this.apiUrl}/${todo.id}`, todo.toApi()).pipe(
+      map((updatedTodo) => Todo.fromApi(updatedTodo)),
+      tap((updatedTodoInstance) => {
+        const currentTodos = this.todosSubject.value;
+        const updatedTodos = currentTodos.map(t => 
+          t.id === todo.id ? updatedTodoInstance : t
+        );
+        this.todosSubject.next(updatedTodos);
+      })
+    );
+  }
+
+  removeTodo(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        const currentTodos = this.todosSubject.value;
+        const updatedTodos = currentTodos.filter(t => t.id !== id);
+        this.todosSubject.next(updatedTodos);
+      })
+    );
+  }
+
+  completeAllTodos(): Observable<Todo[]> {
+    const currentTodos = this.todosSubject.value;
+    const updatePromises = currentTodos.map(todo => {
+      const updatedTodo = new Todo(
         todo.id,
         todo.title,
         true,
         todo.description,
-        todo.priority
+        todo.priority,
+        todo.createdAt,
+        todo.updatedAt
       );
+      return this.updateTodo(updatedTodo).toPromise();
     });
+
+    return new Observable(observer => {
+      Promise.all(updatePromises).then(() => {
+        this.loadTodos();
+        observer.next(this.todosSubject.value);
+        observer.complete();
+      }).catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
+  refreshTodos(): void {
+    this.loadTodos();
   }
 }

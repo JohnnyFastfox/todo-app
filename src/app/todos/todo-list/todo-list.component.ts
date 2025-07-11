@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoService } from '../todo.service';
-import { TodoModel } from '../todo.model';
+import { TodoModel, Todo } from '../todo.model';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
 
 @Component({
@@ -12,40 +12,54 @@ import { TodoItemComponent } from '../todo-item/todo-item.component';
   imports: [CommonModule, TodoItemComponent]
 })
 export class TodoListComponent implements OnInit {
-  todos: TodoModel[] = [];
+  todos: Todo[] = [];
   filter: 'all' | 'open' | 'done' = 'all';
 
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
-    this.todos = this.todoService.getTodos();
+    this.todoService.getTodos().subscribe(todos => {
+      this.todos = todos;
+    });
   }
 
-  onToggle(id: number): void {
-    this.todoService.toggleTodo(id);
-    this.todos = this.todoService.getTodos();
+  onToggle(id: string): void {
+    this.todoService.toggleTodo(id).subscribe({
+      error: (error) => {
+        console.error('Error toggling todo:', error);
+      }
+    });
   }
 
-  onRemove(id: number): void {
-    this.todoService.removeTodo(id);
-    this.todos = this.todoService.getTodos();
+  onRemove(id: string): void {
+    this.todoService.removeTodo(id).subscribe({
+      error: (error) => {
+        console.error('Error removing todo:', error);
+      }
+    });
   }
 
   addTodo(event: { title: string; priority: number }): void {
-    this.todoService.addTodo(event.title, event.priority);
-    this.todos = this.todoService.getTodos();
+    this.todoService.addTodo(event.title, event.priority).subscribe({
+      error: (error) => {
+        console.error('Error adding todo:', error);
+      }
+    });
   }
 
   completeAllTodos(): void {
-    this.todoService.completeAllTodos();
-    this.todos = this.todoService.getTodos();
+    this.todoService.completeAllTodos().subscribe({
+      error: (error) => {
+        console.error('Error completing all todos:', error);
+      }
+    });
   }
 
   setFilter(newFilter: 'all' | 'open' | 'done'): void {
     this.filter = newFilter;
   }
 
-  getFilteredTodos(): TodoModel[] {
+  getFilteredTodos(): Todo[] {
     switch (this.filter) {
       case 'open':
         return this.todos.filter(todo => !todo.completed);

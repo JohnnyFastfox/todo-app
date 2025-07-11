@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TodoModel } from '../todo.model';
+import { Todo } from '../todo.model';
 import { AbsolutePriorityPipe } from '../absolute-priority-pipe';
 
 @Component({
@@ -11,7 +11,7 @@ import { AbsolutePriorityPipe } from '../absolute-priority-pipe';
   imports: [CommonModule, AbsolutePriorityPipe]
 })
 export class TodoItemComponent {
-  @Input() todo!: TodoModel;
+  @Input() todo!: Todo;
 
   @Output() toggle = new EventEmitter<void>();
 
